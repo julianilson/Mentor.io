@@ -388,6 +388,7 @@ const View4Locked = () => {
         sendMessage(inputValue)
     }
     return (
+        <div className="flex-1 flex flex-col bg-surface-alt relative overflow-hidden">
             {/* Notification Toast */}
             <AnimatePresence>
                 {showToast && (
@@ -404,7 +405,7 @@ const View4Locked = () => {
                             y: -100,
                             opacity: 0,
                         }}
-                        className="fixed top-2 left-0 right-0 z-[100] px-4 pointer-events-none"
+                        className="absolute top-2 left-0 right-0 z-[100] px-4 pointer-events-none"
                     >
                         <div className="bg-success text-white px-5 py-4 rounded-3xl shadow-2xl flex items-center gap-3 backdrop-blur-md bg-success/90 border border-white/20">
                             <div className="bg-white/20 p-1.5 rounded-full">
@@ -458,61 +459,35 @@ const View4Locked = () => {
                             <CalendarIcon className="w-4 h-4 text-brand" />
                             <span>Thursday, Jan 15 at 10:30 AM</span>
                         </div>
-                        <div className="flex items-center gap-3 text-sm text-text-muted">
-                            <VideoIcon className="w-4 h-4 text-brand" />
-                            <span>Video call · 30 minutes</span>
+                        <div className="flex items-center gap-3 text-sm font-medium text-text-main">
+                            <VideoIcon className="w-4 h-4 text-text-muted" />
+                            <span className="text-text-muted">Video call · 30 minutes</span>
                         </div>
-                        <div className="pt-2.5 border-t border-border mt-0.5">
-                            <a
-                                href="#"
-                                className="text-xs text-brand hover:text-brand-dark font-medium"
-                                onClick={(e) => e.preventDefault()}
-                            >
-                                Add to calendar
-                            </a>
-                        </div>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
+                        <button className="text-brand text-xs font-bold hover:underline">
+                            Add to calendar
+                        </button>
                     </div>
                 </div>
 
-                {/* Chat Messages */}
-                <div className="space-y-3 flex-1 flex flex-col justify-end">
-                    <AnimatePresence>
-                        {messages.map((msg, idx) => (
-                            <motion.div
-                                key={idx}
-                                initial={{
-                                    opacity: 0,
-                                    y: 10,
-                                    scale: 0.95,
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                    y: 0,
-                                    scale: 1,
-                                }}
-                                className={`flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`}
-                            >
-                                {msg.sender === 'them' && (
-                                    <Avatar
-                                        src={MOCK_DATA.mentor.avatar}
-                                        alt="Mentor"
-                                        size="sm"
-                                        className="mr-2 mt-1 flex-shrink-0 w-7 h-7"
-                                    />
-                                )}
-                                <div
-                                    className={`px-4 py-2.5 rounded-2xl max-w-[75%] text-sm ${msg.sender === 'me' ? 'bg-brand text-white rounded-br-sm' : 'bg-white text-text-main border border-border rounded-bl-sm shadow-sm'}`}
-                                >
-                                    {msg.text}
-                                </div>
-                            </motion.div>
-                        ))}
-                    </AnimatePresence>
-                </div>
+                {/* Messages */}
+                {messages.map((msg, idx) => (
+                    <div
+                        key={idx}
+                        className={`flex mb-4 ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`}
+                    >
+                        <div
+                            className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm ${msg.sender === 'me' ? 'bg-brand text-white' : 'bg-white text-text-main border border-border shadow-sm'}`}
+                        >
+                            {msg.text}
+                        </div>
+                    </div>
+                ))}
             </div>
 
             {/* Bottom Input Area */}
-            <div className="sticky bottom-0 z-20 pointer-events-none">
+            <div className="z-20">
                 {/* Suggestion Chips — floating above */}
                 <AnimatePresence>
                     {suggestions.length > 0 && (
@@ -532,7 +507,7 @@ const View4Locked = () => {
                                 opacity: 0,
                                 y: 10,
                             }}
-                            className="overflow-hidden pointer-events-auto"
+                            className="overflow-hidden"
                         >
                             <div className="flex overflow-x-auto gap-2 px-4 pb-3 scrollbar-hide">
                                 {suggestions.map((sug, idx) => (
@@ -550,7 +525,7 @@ const View4Locked = () => {
                 </AnimatePresence>
 
                 {/* Text Input Container */}
-                <div className="bg-white border-t border-border p-3 pointer-events-auto">
+                <div className="bg-white border-t border-border p-3">
                     <div className="flex items-center gap-2">
                         <input
                             type="text"
@@ -591,36 +566,58 @@ export const Variant1CardFlow = ({
                     <StepIndicator current={currentView} total={2} />
                 )}
  
-                <div className="flex-1">
+                <div className="flex-1 flex flex-col min-h-0">
                     <AnimatePresence mode="wait">
                         {currentView === 0 && (
-                            <div className="p-8 h-full overflow-y-auto scrollbar-hide">
-                                <View1Match key="v1" onNext={() => setView(1)} />
-                            </div>
+                            <motion.div
+                                key="v1"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="h-full overflow-y-auto scrollbar-hide"
+                            >
+                                <View1Match onNext={() => setView(1)} />
+                            </motion.div>
                         )}
                         {currentView === 1 && (
-                            <div className="p-8 h-full overflow-y-auto scrollbar-hide overflow-x-hidden">
+                            <motion.div
+                                key="v2"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="h-full overflow-y-auto scrollbar-hide overflow-x-hidden"
+                            >
                                 <View2Availability
-                                    key="v2"
                                     onNext={() => setView(2)}
                                     selectedSlots={selectedSlots}
                                     setSelectedSlots={setSelectedSlots}
                                 />
-                            </div>
+                            </motion.div>
                         )}
                         {currentView === 2 && (
-                            <div className="p-8 h-full overflow-y-auto scrollbar-hide">
+                            <motion.div
+                                key="v3"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="h-full overflow-y-auto scrollbar-hide"
+                            >
                                 <View3Approval
-                                    key="v3"
                                     onNext={() => setView(3)}
                                     selectedSlots={selectedSlots}
                                 />
-                            </div>
+                            </motion.div>
                         )}
                         {currentView === 3 && (
-                            <div className="h-full">
-                                <View4Locked key="v4" />
-                            </div>
+                            <motion.div
+                                key="v4"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="flex-1 flex flex-col"
+                            >
+                                <View4Locked />
+                            </motion.div>
                         )}
                     </AnimatePresence>
                 </div>
