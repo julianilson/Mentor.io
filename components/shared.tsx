@@ -5,11 +5,13 @@ export const Avatar = ({
     alt,
     size = 'md',
     className = '',
+    hasDoubleBorder = false,
 }: {
     src: string
     alt: string
     size?: 'sm' | 'md' | 'lg' | 'xl'
     className?: string
+    hasDoubleBorder?: boolean
 }) => {
     const sizes = {
         sm: 'w-8 h-8',
@@ -17,11 +19,16 @@ export const Avatar = ({
         lg: 'w-16 h-16',
         xl: 'w-20 h-20',
     }
+    
+    const borderStyle = hasDoubleBorder 
+        ? 'ring-2 ring-brand ring-offset-2 ring-offset-white border-none' 
+        : 'border-2 border-white'
+
     return (
         <img
             src={src}
             alt={alt}
-            className={`${sizes[size]} rounded-full object-cover border-2 border-white shadow-sm ${className}`}
+            className={`${sizes[size]} rounded-full object-cover shadow-sm ${borderStyle} ${className}`}
         />
     )
 }

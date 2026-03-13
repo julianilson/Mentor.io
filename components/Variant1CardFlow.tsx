@@ -26,6 +26,7 @@ const View1Match = ({ onNext }: ViewProps) => {
                     src={MOCK_DATA.mentor.avatar}
                     alt={MOCK_DATA.mentor.name}
                     size="xl"
+                    hasDoubleBorder
                 />
                 <div className="absolute -bottom-2 -right-2 bg-success text-white p-1.5 rounded-full border-2 border-white">
                     <CheckIcon className="w-4 h-4" />
@@ -228,9 +229,11 @@ const View2Availability = ({
                         </motion.span>
                     )}
                 </div>
-                <Button className="w-full py-3.5" disabled={!isValid} onClick={onNext}>
-                    Send availability to Victor
-                </Button>
+                {isValid && (
+                    <Button className="w-full py-3.5" onClick={onNext}>
+                        Send availability to Victor
+                    </Button>
+                )}
             </div>
         </FadeIn>
     )
@@ -402,7 +405,7 @@ const View4Locked = () => {
                 <button className="text-text-muted hover:text-text-main transition-colors p-1">
                     <ChevronLeftIcon className="w-5 h-5" />
                 </button>
-                <Avatar src={MOCK_DATA.mentor.avatar} alt="Mentor" size="sm" />
+                <Avatar src={MOCK_DATA.mentor.avatar} alt="Mentor" size="sm" hasDoubleBorder />
                 <h3 className="font-bold text-sm text-text-main">{MOCK_DATA.mentor.name}</h3>
             </div>
 
@@ -412,23 +415,20 @@ const View4Locked = () => {
                 </div>
 
                 <div className="bg-white rounded-2xl border border-border shadow-sm p-4 mb-4 w-full">
-                    <div className="flex items-center gap-2 mb-3">
-                        <div className="bg-orange-500/10 p-1 rounded-full">
-                            <VideoIcon className="w-3.5 h-3.5 text-orange-500" />
-                        </div>
-                        <span className="text-xs font-semibold text-text-main">Victor & Julian videocall</span>
+                    <div className="mb-4">
+                        <h4 className="text-base font-medium text-text-main">Victor & Julian videocall</h4>
                     </div>
                     <div className="flex flex-col gap-2.5">
-                        <div className="flex items-center gap-3 text-sm font-medium text-text-main">
-                            <CalendarIcon className="w-4 h-4 text-brand" />
+                        <div className="flex items-center gap-3 text-sm font-medium text-text-muted">
+                            <CalendarIcon className="w-4 h-4 text-text-muted" />
                             <span>Thursday, Jan 15 at 10:30 AM</span>
                         </div>
-                        <div className="flex items-center gap-3 text-sm font-medium text-text-main">
+                        <div className="flex items-center gap-3 text-sm font-medium text-text-muted">
                             <VideoIcon className="w-4 h-4 text-text-muted" />
-                            <span className="text-text-muted">Video call · 30 minutes</span>
+                            <span>Video call · 30 minutes</span>
                         </div>
                     </div>
-                    <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
+                    <div className="mt-4 pt-4 border-t border-border flex items-center justify-end">
                         <button className="text-brand text-xs font-bold hover:underline">Add to calendar</button>
                     </div>
                 </div>
@@ -488,12 +488,50 @@ const View4Locked = () => {
 
 export const Variant1CardFlow = ({ currentView, setView }: { currentView: number; setView: (v: number) => void }) => {
     const [selectedSlots, setSelectedSlots] = useState<string[]>([])
+    const [isTransitioning, setIsTransitioning] = useState(false)
+
+    const handleSendAvailability = () => {
+        setIsTransitioning(true)
+        setTimeout(() => {
+            setView(2)
+            setIsTransitioning(false)
+        }, 2500)
+    }
 
     return (
         <div className="min-h-[95vh] flex items-center justify-center p-4 bg-surface">
             <div className={`w-full max-w-[400px] min-h-[92vh] max-h-[92vh] bg-white rounded-[2.5rem] shadow-warm-lg border-[6px] border-gray-200 relative overflow-hidden flex flex-col ${currentView === 3 ? 'p-0' : 'p-8'}`}>
+                <AnimatePresence>
+                    {isTransitioning && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 z-[100] bg-white flex flex-col items-center justify-center p-8 text-center"
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.2, duration: 0.5 }}
+                            >
+                                <h2 className="text-3xl font-heading font-bold text-brand-dark mb-4">Switching to Mentor View</h2>
+                                <div className="flex gap-1 justify-center">
+                                    {[0, 1, 2].map((i) => (
+                                        <motion.div
+                                            key={i}
+                                            animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }}
+                                            transition={{ repeat: Infinity, duration: 1, delay: i * 0.2 }}
+                                            className="w-2 h-2 rounded-full bg-brand"
+                                        />
+                                    ))}
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
                 {(currentView === 0 || currentView === 1) && <StepIndicator current={currentView} total={2} />}
-                <div className="flex-1 flex flex-col min-h-0">
+                <div className="flex-1 flex flex-col min-h-0 relative">
                     <AnimatePresence mode="wait">
                         {currentView === 0 && (
                             <motion.div key="v1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full overflow-y-auto scrollbar-hide">
@@ -502,7 +540,7 @@ export const Variant1CardFlow = ({ currentView, setView }: { currentView: number
                         )}
                         {currentView === 1 && (
                             <motion.div key="v2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full overflow-y-auto scrollbar-hide overflow-x-hidden">
-                                <View2Availability onNext={() => setView(2)} selectedSlots={selectedSlots} setSelectedSlots={setSelectedSlots} />
+                                <View2Availability onNext={handleSendAvailability} selectedSlots={selectedSlots} setSelectedSlots={setSelectedSlots} />
                             </motion.div>
                         )}
                         {currentView === 2 && (

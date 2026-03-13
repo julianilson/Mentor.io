@@ -2,7 +2,7 @@ export const MOCK_DATA = {
     mentor: {
         name: 'Victor Lal',
         title: 'Founder at TechCo',
-        avatar: 'https://i.pravatar.cc/150?u=victor',
+        avatar: '/assets/victor.png',
         company: 'TechCo',
     },
     mentee: {

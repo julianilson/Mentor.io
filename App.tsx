@@ -11,6 +11,8 @@ import {
 import { Variant1CardFlow } from './components/Variant1CardFlow'
 import { Variant2SplitPanel } from './components/Variant2SplitPanel'
 import { Variant3ConvoStack } from './components/Variant3ConvoStack'
+import { Avatar } from './components/shared'
+import { MOCK_DATA } from './components/data'
 
 export function App() {
     const [activeVariant, setActiveVariant] = useState(0)
@@ -19,13 +21,13 @@ export function App() {
     const variants = [
         {
             id: 0,
-            name: 'Card Flow',
+            name: 'Mobile View',
             icon: SmartphoneIcon,
             component: Variant1CardFlow,
         },
         {
             id: 1,
-            name: 'Split Panel',
+            name: 'Tablet & Desktop',
             icon: MonitorIcon,
             component: Variant2SplitPanel,
         },
@@ -38,10 +40,10 @@ export function App() {
     ]
 
     const views = [
-        { id: 0, name: 'Match (Mentee)' },
-        { id: 1, name: 'Availability (Mentee)' },
-        { id: 2, name: 'Approval (Mentor)' },
-        { id: 3, name: 'Confirmed (Both)' },
+        { id: 0, name: 'Match' },
+        { id: 1, name: 'Availability' },
+        { id: 2, name: 'Approval' },
+        { id: 3, name: 'Confirmed' },
     ]
 
     const CurrentVariantComponent = variants[activeVariant].component
@@ -57,9 +59,8 @@ export function App() {
             <aside className="w-72 bg-white border-r border-border flex flex-col z-50 shadow-sm">
                 <div className="p-6 border-b border-border">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-brand rounded-xl flex items-center justify-center shadow-sm">
-                            <span className="text-white font-heading font-bold text-xl">M</span>
-                        </div>
+                        {/* Replaced the div placeholder with the Avatar component */}
+                        <Avatar src={MOCK_DATA.mentor.avatar} alt="Mentor" size="sm" hasDoubleBorder />
                         <div>
                             <h1 className="font-heading font-bold text-lg text-brand-dark leading-none">Mentor.io</h1>
                             <p className="text-xs text-text-muted mt-1 font-medium uppercase tracking-wider">Prototype Lab</p>
@@ -68,11 +69,11 @@ export function App() {
                 </div>
 
                 <div className="flex-1 overflow-y-auto py-6 px-4 space-y-8">
-                    {/* Variants Section */}
+                    {/* Devices Section */}
                     <div>
-                        <h2 className="px-4 text-xs font-bold text-text-muted uppercase tracking-widest mb-4">Variants</h2>
+                        <h2 className="px-4 text-xs font-bold text-text-muted uppercase tracking-widest mb-4">Devices</h2>
                         <nav className="space-y-1">
-                            {variants.map((v) => {
+                            {variants.slice(0, 2).map((v) => {
                                 const Icon = v.icon
                                 const isActive = activeVariant === v.id
                                 return (
@@ -94,30 +95,88 @@ export function App() {
                         </nav>
                     </div>
 
-                    {/* Views Section */}
+                    {/* Variants Section */}
                     <div>
-                        <h2 className="px-4 text-xs font-bold text-text-muted uppercase tracking-widest mb-4">View States</h2>
-                        <nav className="space-y-1 relative before:absolute before:left-6 before:top-2 before:bottom-2 before:w-0.5 before:bg-border/50">
-                            {views.map((v) => {
-                                const isActive = activeView === v.id
+                        <h2 className="px-4 text-xs font-bold text-text-muted uppercase tracking-widest mb-4">Variants</h2>
+                        <nav className="space-y-1">
+                            {variants.slice(2).map((v) => {
+                                const Icon = v.icon
+                                const isActive = activeVariant === v.id
                                 return (
                                     <button
                                         key={v.id}
-                                        onClick={() => setActiveView(v.id)}
-                                        className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all pl-10 relative ${
+                                        onClick={() => handleVariantChange(v.id)}
+                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all group ${
                                             isActive 
-                                            ? 'text-brand-dark font-semibold' 
-                                            : 'text-text-muted hover:text-text-main'
+                                            ? 'bg-brand-50 text-brand-dark font-semibold shadow-sm' 
+                                            : 'text-text-body hover:bg-surface-alt hover:text-text-main'
                                         }`}
                                     >
-                                        <div className={`absolute left-[22px] w-2.5 h-2.5 rounded-full border-2 transition-all ${
-                                            isActive ? 'bg-brand border-brand scale-125' : 'bg-white border-border group-hover:border-text-muted'
-                                        }`} />
-                                        <span className="text-sm">{v.name}</span>
+                                        <Icon className={`w-5 h-5 ${isActive ? 'text-brand' : 'text-text-muted group-hover:text-text-main'}`} />
+                                        <span className="flex-1 text-left">{v.name}</span>
+                                        {isActive && <ChevronRightIcon className="w-4 h-4 text-brand" />}
                                     </button>
                                 )
                             })}
                         </nav>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="px-4">
+                        <div className="h-px bg-border w-full" />
+                    </div>
+
+                    {/* Views Section */}
+                    <div>
+                        <div className="mb-6">
+                            <h2 className="px-4 text-xs font-bold text-text-muted uppercase tracking-widest mb-4">Mentee Views</h2>
+                            <nav className="space-y-1 relative before:absolute before:left-6 before:top-2 before:bottom-2 before:w-0.5 before:bg-border/50">
+                                {views.slice(0, 2).map((v) => {
+                                    const isActive = activeView === v.id
+                                    return (
+                                        <button
+                                            key={v.id}
+                                            onClick={() => setActiveView(v.id)}
+                                            className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all pl-10 relative ${
+                                                isActive 
+                                                ? 'text-brand-dark font-semibold' 
+                                                : 'text-text-muted hover:text-text-main'
+                                            }`}
+                                        >
+                                            <div className={`absolute left-[22px] w-2.5 h-2.5 rounded-full border-2 transition-all ${
+                                                isActive ? 'bg-brand border-brand scale-125' : 'bg-white border-border group-hover:border-text-muted'
+                                            }`} />
+                                            <span className="text-sm">{v.name}</span>
+                                        </button>
+                                    )
+                                })}
+                            </nav>
+                        </div>
+
+                        <div>
+                            <h2 className="px-4 text-xs font-bold text-text-muted uppercase tracking-widest mb-4">Mentor Views</h2>
+                            <nav className="space-y-1 relative before:absolute before:left-6 before:top-2 before:bottom-2 before:w-0.5 before:bg-border/50">
+                                {views.slice(2).map((v) => {
+                                    const isActive = activeView === v.id
+                                    return (
+                                        <button
+                                            key={v.id}
+                                            onClick={() => setActiveView(v.id)}
+                                            className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all pl-10 relative ${
+                                                isActive 
+                                                ? 'text-brand-dark font-semibold' 
+                                                : 'text-text-muted hover:text-text-main'
+                                            }`}
+                                        >
+                                            <div className={`absolute left-[22px] w-2.5 h-2.5 rounded-full border-2 transition-all ${
+                                                isActive ? 'bg-brand border-brand scale-125' : 'bg-white border-border group-hover:border-text-muted'
+                                            }`} />
+                                            <span className="text-sm">{v.name}</span>
+                                        </button>
+                                    )
+                                })}
+                            </nav>
+                        </div>
                     </div>
                 </div>
 
@@ -129,13 +188,11 @@ export function App() {
             </aside>
 
             {/* Main Canvas Area */}
-            <main className="flex-1 relative bg-surface overflow-auto">
-                <div className="h-full w-full">
-                    <CurrentVariantComponent
-                        currentView={activeView}
-                        setView={setActiveView}
-                    />
-                </div>
+            <main className="flex-1 relative bg-surface overflow-auto flex items-center justify-center p-4">
+                <CurrentVariantComponent
+                    currentView={activeView}
+                    setView={setActiveView}
+                />
             </main>
         </div>
     )
