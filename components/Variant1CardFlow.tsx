@@ -1,3 +1,4 @@
+// VERSION: 1.0.1
 import React, { useEffect, useState, Fragment } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
